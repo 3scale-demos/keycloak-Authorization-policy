@@ -1,0 +1,113 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+metadata:
+  name: "apicast-custom-policies"
+message: "3scale APAC Authorization policy"
+objects:
+
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+    labels:
+      app: apicast
+    name: apicast-new-policies
+
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+    labels:
+      app: apicast
+    name: apicast-new-policy
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'apicast-new-policies:${NEW_POLICY_RELEASE}'
+    source:
+      contextDir: ABAC-policy
+      git:
+        uri: ${GIT_REPO}
+        ref: 'master'
+        
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'amp-apicast-custom:${CUSTOM_IS_TAG}'
+          namespace: ${APICAST_CUSTOM_NAMESPACE}
+
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+    labels:
+      app: apicast
+    name: apicast-custom
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'amp-apicast:${AMP_RELEASE}'
+    postCommit:
+      args:
+        - '--test'
+        - '--lazy'
+      command:
+        - bin/apicast
+    resources: {}
+    runPolicy: Serial
+    source:
+      images:
+        - from:
+            kind: ImageStreamTag
+            name: 'apicast-new-policies:${NEW_POLICY_RELEASE}'
+          paths:
+            # copy policy source code into the new image
+            - destinationDir: policies
+              sourcePath: /opt/app-root/policies/jwt_ABAC_Authorizer
+            # copy also installed dependencies to the policy folder, so they are vendored
+            # - destinationDir: policies/example/0.1/resty/
+            #   sourcePath: /opt/app-root/src/lua_modules/share/lua/5.1/resty/iputils.lua
+      type: Dockerfile
+      dockerfile: |
+        FROM scratch
+        COPY . src
+        USER root
+
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'amp-apicast-custom:${CUSTOM_IS_TAG}'
+          namespace: ${APICAST_CUSTOM_NAMESPACE}
+      type: Docker
+#    triggers:
+#      - type: ConfigChange
+#      - type: ImageChange
+
+
+
+parameters:
+- name: AMP_RELEASE
+  description: The destination tag of your AMP release (eg. 2.8)
+  value: '2.10'
+
+- name: CUSTOM_IS_TAG
+  description: The version of the custom apicast imagestream pulled from the registry
+  value: '3scale2.10.0'
+
+- name: NEW_POLICY_RELEASE
+  description: The version of the policies
+  value: '0.1.0'
+
+- name: GIT_REPO
+  description: GIT REPO
+  value: 'https://github.com/abdelhamidfg/3scale-ABAC-policy'
+
+- name: APICAST_CUSTOM_NAMESPACE
+  description: 'where to find the custom policies'
+  value: 3scale210

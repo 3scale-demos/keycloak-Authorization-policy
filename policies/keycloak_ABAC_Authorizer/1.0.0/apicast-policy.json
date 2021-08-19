@@ -1,0 +1,146 @@
+{
+  "$schema": "http://apicast.io/policy-v1.1/schema#manifest#",
+  "name": "keycloak ABAC Authorize",
+  "summary": "keycloak ABAC Authorize.",
+  "description":
+    ["This policy allows to modify the path of a request. ",
+     "The operations supported are sub and gsub based on ngx.re.sub and ",
+     "ngx.re.gsub provided by OpenResty. Please check ",
+     "https://github.com/openresty/lua-nginx-module for more details on how ",
+     "to define regular expressions and learn the options supported. \n",
+     "When combined with the APIcast policy, if the URL rewriting policy is ",
+     "placed before it in the chain, the APIcast mapping rules will apply to the ",
+     "modified path. If the URL rewriting policy is placed after APIcast in the ",
+     "chain, then the mapping rules will apply to the original path."],
+  "version": "1.0.0",
+  "configuration": {
+    "definitions": {
+      "value_type": {
+        "$id": "#/definitions/value_type",
+        "type": "string",
+        "oneOf": [{
+          "enum": ["plain"],
+          "title": "Evaluate as plain text."
+        }, {
+          "enum": ["liquid"],
+          "title": "Evaluate as liquid."
+        }]
+      },
+      "methods": {
+        "description": "Array of HTTP methods this rule must be applied to. If left blank it will be applied to all HTTP methods",
+        "$id": "#/definitions/methods",
+         
+        
+          "type": "string",
+          "oneOf": [
+            {
+              "enum": [
+                "GET"
+              ],
+              "title": "GET"
+            },
+            {
+              "enum": [
+                "POST"
+              ],
+              "title": "POST"
+            },
+            {
+              "enum": [
+                "PUT"
+              ],
+              "title": "PUT"
+            },
+            {
+              "enum": [
+                "PATCH"
+              ],
+              "title": "PATCH"
+            },
+            {
+              "enum": [
+                "DELETE"
+              ],
+              "title": "DELETE"
+            },
+            {
+              "enum": [
+                "HEAD"
+              ],
+              "title": "HEAD"
+            },
+            {
+              "enum": [
+                "OPTIONS"
+              ],
+              "title": "OPTIONS"
+            }
+          ]
+         
+      }
+    },
+    "type": "object",
+    "properties": {
+       "error_message": {
+        "title": "Error message",
+        "description": "Error message to show to user when traffic is blocked",
+        "type": "string"
+      },
+      "rules": {
+        "description": "List of ABAC rules ",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+           
+            "resource": {
+              "description": "Resource controlled by the rule. This is the same format as Mapping Rules. This matches from the beginning of the string and to make an exact match you need to use '$' at the end.",
+              "type": "string"
+            },
+             "resource_type": {
+              "description": "How to evaluate 'resource' field",
+              "$ref": "#/definitions/value_type"
+            },
+            "Keycloak_resource_name": {
+              "description": "Keycloak resource name",
+              "type": "string"
+            },
+             "Keycloak_scope": {
+              "description": "Keycloak scope name",
+              "type": "string"
+            },
+            "methods": {
+              "description": "Allowed methods",
+              "type": "array",
+              "default": ["ANY"],
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ANY",
+                  "GET",
+                  "HEAD",
+                  "POST",
+                  "PUT",
+                  "DELETE",
+                  "PATCH",
+                  "OPTIONS",
+                  "TRACE",
+                  "CONNECT"
+                ]
+              }
+            }
+           
+          },
+          "required": [
+            "Keycloak_resource_name",
+            "resource",
+            "Keycloak_scope"
+            
+          ]
+        }
+      }
+      
+	  
+    }
+  }
+}
