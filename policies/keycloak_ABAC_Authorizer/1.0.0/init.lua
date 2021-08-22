@@ -1,1 +1,1 @@
-return require('keycloak_ABAC_Authorizer')
+return require('keycloak_Authorizer')
