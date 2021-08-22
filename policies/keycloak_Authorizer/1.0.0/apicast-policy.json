@@ -3,15 +3,10 @@
   "name": "keycloak Authorizer",
   "summary": "keycloak Authorizer.",
   "description":
-    ["This policy allows to modify the path of a request. ",
-     "The operations supported are sub and gsub based on ngx.re.sub and ",
-     "ngx.re.gsub provided by OpenResty. Please check ",
-     "https://github.com/openresty/lua-nginx-module for more details on how ",
-     "to define regular expressions and learn the options supported. \n",
-     "When combined with the APIcast policy, if the URL rewriting policy is ",
-     "placed before it in the chain, the APIcast mapping rules will apply to the ",
-     "modified path. If the URL rewriting policy is placed after APIcast in the ",
-     "chain, then the mapping rules will apply to the original path."],
+    ["This Policy integrates APICast with Keycloak Authorization services. ",
+     "Allows APICast to enforce authorization decisions ",
+     "based on the defined policies in keycloak authorization services ",
+    ""],
   "version": "1.0.0",
   "configuration": {
     "definitions": {
