@@ -1,7 +1,7 @@
 {
   "$schema": "http://apicast.io/policy-v1.1/schema#manifest#",
-  "name": "keycloak ABAC Authorize",
-  "summary": "keycloak ABAC Authorize.",
+  "name": "keycloak Authorizer",
+  "summary": "keycloak Authorizer.",
   "description":
     ["This policy allows to modify the path of a request. ",
      "The operations supported are sub and gsub based on ngx.re.sub and ",
