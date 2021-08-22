@@ -1,5 +1,5 @@
 local policy = require('apicast.policy')
-local _M = policy.new('keycloak_ABAC_Authorizer', '1.0.0')
+local _M = policy.new('keycloak_Authorizer', '1.0.0')
 
 local resty_url = require('resty.url')
 local MappingRule = require('apicast.mapping_rule')
