@@ -68,7 +68,7 @@ objects:
           paths:
             # copy policy source code into the new image
             - destinationDir: policies
-              sourcePath: /opt/app-root/policies/jwt_ABAC_Authorizer
+              sourcePath: /opt/app-root/policies/keycloak_Authorizer
             # copy also installed dependencies to the policy folder, so they are vendored
             # - destinationDir: policies/example/0.1/resty/
             #   sourcePath: /opt/app-root/src/lua_modules/share/lua/5.1/resty/iputils.lua
@@ -106,7 +106,7 @@ parameters:
 
 - name: GIT_REPO
   description: GIT REPO
-  value: 'https://github.com/abdelhamidfg/3scale-ABAC-policy'
+  value: 'https://github.com/abdelhamidfg/keycloak-Authorization-policy'
 
 - name: APICAST_CUSTOM_NAMESPACE
   description: 'where to find the custom policies'
