@@ -13,16 +13,12 @@ local resty_url = require('resty.url')
 
 function _M.new(config)
   local self = new(config)
-  self.error_message = default_error_message--config.error_message or default_error_message
+  self.error_message = config.error_message or default_error_message
   self.rules = {}
 
   --ngx.log(ngx.ERR,"issuer=",  valid_issuer_endpoint(config and config.issuer_endpoint))
   for _, rule in ipairs(config.rules) do
-   -- ngx.log(ngx.ERR,"rule.methods=", rule.methods)
-    ngx.log(ngx.ERR,"rule.Keycloak_resource_name=", rule.Keycloak_resource_name)
-    ngx.log(ngx.ERR,"rule.Keycloak_scope=", rule.Keycloak_scope)
-    ngx.log(ngx.ERR,"rule.resource=", rule.resource)
-    ngx.log(ngx.ERR,"rule.resource_type=", rule.resource_type)
+   
      table.insert( self.rules, {
       methods = rule.methods or default_allowed_methods,
       resource = TemplateString.new(
@@ -71,7 +67,7 @@ local function is_rule_matche_request(rule, context)
     end
   end
 
-  ngx.log(ngx.ERR,"mapping_rule_match=",mapping_rule_match )
+  ngx.log(ngx.INFO,"mapping_rule_match=",mapping_rule_match )
  
     return mapping_rule_match
  
@@ -97,15 +93,11 @@ local function check_keycloak_authorization(keycloak_uri,keycloak_clientID,keycl
         },
       })
       if res and not isempty(res.body) then
-      ngx.log(ngx.ERR, "inside 1 ", res.body)
-  
-        if  string.find(res.body, "true") then 
-            ngx.log(ngx.ERR, "inside 2 ", res.body)
+         if  string.find(res.body, "true") then 
             is_authorized=true
         end    
       end
-      ngx.log(ngx.ERR, "response= ", res.body)
- ngx.log(ngx.ERR, "is_authorized in kc= ", is_authorized)
+ 
       return is_authorized
     end
     
