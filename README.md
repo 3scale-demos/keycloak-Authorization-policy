@@ -14,12 +14,12 @@ Keycloak provides fine grained authorization policies  through multiple patterns
  
 ## How to use it?
  
- -Deploy the custom policy in your 3scale enviroment.
- -create an OpenID Connect client in Keycloak.
- -Enable Authorization service in the client by Settting Authorization Enabled to On.
- -Create Resource,Scope,Policy,permission in Keycloak.
- -configure OpenID Connect authentication method in 3scale product.
- -Add the policy to the chain after APICast default policy.
- -Add one or more mapping rules of the resources to be protected with the defined keycloak resource name and scope as below screenshot.
+ - Deploy the custom policy in your 3scale enviroment.
+ - create an OpenID Connect client in Keycloak.
+ - Enable Authorization service in the client by Settting Authorization Enabled to On.
+ - Create Resource,Scope,Policy,permission in Keycloak.
+ - configure OpenID Connect authentication method in 3scale product.
+ - Add the policy to the chain after APICast default policy.
+ - Add one or more mapping rules of the resources to be protected with the defined keycloak resource name and scope as below screenshot.
 
 ![alt text](https://github.com/abdelhamidfg/keycloak-Authorization-policy/blob/master/Authorizer-rule.jpg?raw=true)
