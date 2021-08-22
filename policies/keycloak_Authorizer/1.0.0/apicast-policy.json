@@ -87,7 +87,7 @@
         "type": "string"
       },
       "rules": {
-        "description": "List of ABAC rules ",
+        "description": "List of rules ",
         "type": "array",
         "items": {
           "type": "object",
