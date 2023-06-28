@@ -88,10 +88,15 @@ local function check_keycloak_authorization(keycloak_uri,keycloak_clientID,keycl
         query=query,
         headers = {
             ["Content-Type"] = "application/x-www-form-urlencoded",
-            ["Authorization"] = "Bearer " ..token
+            ["Authorization"] = token
             
         },
       })
+      ngx.log(ngx.DEBUG,"keycloak_clientID=",keycloak_clientID)
+      ngx.log(ngx.DEBUG,"keycloak_resource_name=",keycloak_resource_name)
+      ngx.log(ngx.DEBUG,"keycloak_scope=",keycloak_scope)
+      ngx.log(ngx.DEBUG,"keycloak_uri=",keycloak_uri)
+      ngx.log(ngx.DEBUG,"respo=",res)
       if res and not isempty(res.body) then
          if  string.find(res.body, "true") then 
             is_authorized=true
@@ -101,16 +106,41 @@ local function check_keycloak_authorization(keycloak_uri,keycloak_clientID,keycl
       return is_authorized
     end
     
+    local function getValueIgnoreCase(tbl, key)
+      for k, v in pairs(tbl) do
+        if type(k) == "string" and string.lower(k) == string.lower(key) then
+          return v
+        end
+      end
+      return nil
+    end
+    
+    local function fetch_jwt_token(context)
+      local header = ngx.req.get_headers(0, true)
+       
+      local token = getValueIgnoreCase(header, "Authorization")
+       if not token then
+        return nil, "authorization header not available"
+      end
+    
+      local prefix = string.sub(token, 1, 7)
+      if prefix ~= 'Bearer ' and prefix ~= 'bearer ' then
+        return "Bearer " .. token
+      end
+      ngx.log(ngx.DEBUG, "return token= ", token)
+      return token
+    end
 
     function _M:access(context)
+      
         local is_kc_authorized=false
         local issuer_endpoint=context.service.oidc.issuer_endpoint
         local components = resty_url.parse(issuer_endpoint)
         local keycloak_clientID=components.user
         --TODO handle ports in keycloak url 
         local keycloack_uri=components.scheme.."://"..components.host..components.path
-        local header= ngx.req.get_headers(0, true)
-        local token=header["Authorization"]
+        local token=fetch_jwt_token(context)
+        
          for _, rule in ipairs(self.rules) do
            if is_rule_matche_request(rule, context) then
              --return deny_request(self.error_message)
