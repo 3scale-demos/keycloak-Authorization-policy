@@ -88,7 +88,7 @@ local function check_keycloak_authorization(keycloak_uri,keycloak_clientID,keycl
         query=query,
         headers = {
             ["Content-Type"] = "application/x-www-form-urlencoded",
-            ["Authorization"] = token
+            ["Authorization"] = "Bearer " ..token
             
         },
       })
